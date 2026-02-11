@@ -1,0 +1,51 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+
+		{
+			"name": "Python Debugger: Python File",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${file}"
+		},
+		{
+			"name": "Gnugo GTP Mode",
+			"type": "lldb",
+			"request": "launch",
+			"program": "/opt/homebrew/bin/gnugo",
+			"args": [
+				"--mode",
+				"gtp",
+				"--gtp-listen",
+				"12345"
+			],
+			"cwd": "${workspaceFolder}",
+		},
+		{
+			"name": "Transponder",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/transponder/transponder.py",
+			"args": [
+				"--target-port",
+				"12345",
+				"--listen-port",
+				"12346"
+			],
+			"cwd": "${workspaceFolder}",
+		},
+		{
+			"name": "GDScript: Launch Project",
+			"type": "godot",
+			"request": "launch",
+			"project": "${workspaceFolder}/godotgo",
+			"debug_collisions": false,
+			"debug_paths": false,
+			"debug_navigation": false,
+			"additional_options": "",
+		}
+	]
+}

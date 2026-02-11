@@ -1,0 +1,46 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="godotgo"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.5")
+config/icon="res://icon.png"
+run/script="res://startup.gd"
+
+[layer_names]
+
+2d_physics/layer_1="Layer 1"
+3d_physics/layer_1="Layer 1"
+2d_physics/layer_2="Layer 2"
+3d_physics/layer_2="Layer 2"
+2d_physics/layer_3="Layer 3"
+3d_physics/layer_3="Layer 3"
+2d_physics/layer_4="Layer 4"
+3d_physics/layer_4="Layer 4"
+2d_physics/layer_5="Layer 5"
+3d_physics/layer_5="Layer 5"
+2d_physics/layer_6="Layer 6"
+3d_physics/layer_6="Layer 6"
+2d_physics/layer_7="Layer 7"
+3d_physics/layer_7="Layer 7"
+2d_physics/layer_8="Layer 8"
+3d_physics/layer_8="Layer 8"
+
+[rendering]
+
+quality/driver/driver_name="GLES3"
+gles3/vram_compression/import_etc2_astc=false
+
+[ui]
+
+editor/inspector/initial_expand_state=2
+editor/inspector/category_expand_state=0
