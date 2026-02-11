@@ -8,8 +8,17 @@ extends Node2D
 # 连接管理器
 @onready var _connection_manager = $ConnectionManager
 
+# 棋盘相关
+var _go_board
+var _board_renderer
+
+# 构造函数
 func _ready():
 	print("UI elements initialized")
+	
+	# 初始化棋盘和渲染器
+	_go_board = GoBoard.new()
+	_board_renderer = GoBoardSimpleRenderer.new(_go_board)
 	
 	# 连接信号
 	_connect_button.pressed.connect(_on_connect_button_pressed)
@@ -49,6 +58,13 @@ func _ready():
 	else:
 		print("Auto connect not enabled")
 
+# 私有函数
+func _draw():
+	# 绘制棋盘
+	if _board_renderer:
+		_board_renderer.draw_board(self)
+
+# 私有函数
 func _on_connect_button_pressed():
 	var hostname = _hostname_input.text
 	print("Connect button pressed, hostname: ", hostname)
@@ -58,27 +74,39 @@ func _on_connect_button_pressed():
 	elif not _connection_manager:
 		print("Cannot connect: connection_manager is null")
 
+# 私有函数
 func _on_connected():
 	print("Connected to server")
 	_connect_button.text = "Disconnect"
 	_connect_button.pressed.disconnect(_on_connect_button_pressed)
 	_connect_button.pressed.connect(_on_disconnect_button_pressed)
 
+# 私有函数
 func _on_disconnect_button_pressed():
 	_connection_manager.disconnect_from_server()
 
+# 私有函数
 func _on_disconnected():
 	print("Disconnected from server")
 	_connect_button.text = "Connect"
 	_connect_button.pressed.disconnect(_on_disconnect_button_pressed)
 	_connect_button.pressed.connect(_on_connect_button_pressed)
 
+# 私有函数
 func _on_connection_error(error_message: String):
 	print("Connection error: " + error_message)
 
+# 私有函数
 func _on_message_received(message: String):
 	print("Received message: " + message)
+	
+	# 处理showboard命令的响应
+	if message.begins_with("=showboard"):
+		_go_board.parse_showboard_response(message)
+		# 触发重绘
+		queue_redraw()
 
+# 私有函数
 func _on_refresh_button_pressed():
 	print("Refresh button pressed, sending showboard command")
 	if _connection_manager:
