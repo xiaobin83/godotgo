@@ -11,7 +11,7 @@ import time
 import argparse
 
 class Transponder:
-    def __init__(self, target_host='localhost', target_port=12345, listen_port=8080):
+    def __init__(self, target_host='localhost', target_port=12345, listen_port=12346):
         self.target_host = target_host
         self.target_port = target_port
         self.listen_port = listen_port
@@ -45,22 +45,42 @@ class Transponder:
         """处理目标服务器(12345)的响应，分发给客户端"""
         while self.running and self.target_socket:
             try:
-                response = self.target_socket.recv(4096)
-                if not response:
+                # 累积响应数据
+                response_buffer = b''
+                # 第一次接收，不设置超时
+                chunk = self.target_socket.recv(4096)
+                if not chunk:
                     print("目标服务器连接断开")
                     self.target_socket = None
                     # 重新连接
                     self.connect_to_target()
                     continue
                 
+                response_buffer += chunk
+                
+                # 尝试接收更多数据，设置短超时
+                while True:
+                    try:
+                        self.target_socket.settimeout(0.05)
+                        more_chunk = self.target_socket.recv(4096)
+                        if not more_chunk:
+                            break
+                        response_buffer += more_chunk
+                    except socket.timeout:
+                        # 超时，认为响应已经结束
+                        break
+                    finally:
+                        self.target_socket.settimeout(None)
+                
                 # 打印响应内容到标准输出
-                print(f"{response.decode().strip()}")
+                print("目标服务器响应: ")
+                print(f"{response_buffer.decode()}")
                 
                 # 将响应只返回给最后发送命令的客户端
                 with self.lock:
                     if self.last_client and self.last_client in self.client_sockets:
                         try:
-                            self.last_client.send(response)
+                            self.last_client.send(response_buffer)
                         except Exception as e:
                             print(f"发送响应到客户端失败: {e}")
                             self.remove_client(self.last_client)
@@ -175,7 +195,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='中转器：转发内容到特定端口')
     parser.add_argument('--target-host', default='localhost', help='目标服务器主机地址')
     parser.add_argument('--target-port', type=int, default=12345, help='目标服务器端口')
-    parser.add_argument('--listen-port', type=int, default=8080, help='监听端口')
+    parser.add_argument('--listen-port', type=int, default=12346, help='监听端口')
     args = parser.parse_args()
     
     transponder = Transponder(target_host=args.target_host, target_port=args.target_port, listen_port=args.listen_port)
