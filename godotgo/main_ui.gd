@@ -27,7 +27,6 @@ func _ready():
 	_connection_manager.connected.connect(_on_connected)
 	_connection_manager.disconnected.connect(_on_disconnected)
 	_connection_manager.connection_error.connect(_on_connection_error)
-	_connection_manager.message_received.connect(_on_message_received)
 	
 	# 直接从命令行参数获取
 	var host = "127.0.0.1:12346"
@@ -97,19 +96,14 @@ func _on_connection_error(error_message: String):
 	print("Connection error: " + error_message)
 
 # 私有函数
-func _on_message_received(message: String):
-	print("Received message: " + message)
-	
-	# 处理showboard命令的响应
-	if message.begins_with("=showboard"):
-		_go_board.parse_showboard_response(message)
-		# 触发重绘
-		queue_redraw()
-
-# 私有函数
 func _on_refresh_button_pressed():
 	print("Refresh button pressed, sending showboard command")
 	if _connection_manager:
-		_connection_manager.send_message("showboard\n")
+		var response = await _connection_manager.send_message_async("showboard\n")
+		if response is String:
+			_go_board.parse_showboard_response(response)
+			# 触发重绘
+			queue_redraw()
+
 	else:
 		print("Cannot send message: connection_manager is null")
