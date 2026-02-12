@@ -72,18 +72,23 @@ class Transponder:
                     finally:
                         self.target_socket.settimeout(None)
                 
-                # 打印响应内容到标准输出
+                # 打印响应内容到标准输出，使用错误处理避免乱码
                 print("目标服务器响应: ")
-                print(f"{response_buffer.decode()}")
+                try:
+                    print(f"{response_buffer.decode('utf-8', errors='replace')}")
+                except Exception as e:
+                    print(f"响应解码失败: {e}")
+                    print(f"原始响应 (前500字节): {response_buffer[:500]}")
                 
                 # 将响应只返回给最后发送命令的客户端
                 with self.lock:
-                    if self.last_client and self.last_client in self.client_sockets:
+                    current_last_client = self.last_client
+                    if current_last_client and current_last_client in self.client_sockets:
                         try:
-                            self.last_client.send(response_buffer)
+                            current_last_client.send(response_buffer)
                         except Exception as e:
                             print(f"发送响应到客户端失败: {e}")
-                            self.remove_client(self.last_client)
+                            self.remove_client(current_last_client)
             except Exception as e:
                 print(f"处理目标服务器响应失败: {e}")
                 self.target_socket = None
