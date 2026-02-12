@@ -8,6 +8,9 @@ extends Node2D
 # 连接管理器
 @onready var _connection_manager = $ConnectionManager
 
+# GTP命令管理
+var _gtp_cmd
+
 # 棋盘相关
 var _go_board
 var _board_renderer
@@ -19,6 +22,10 @@ func _ready():
 	# 初始化棋盘和渲染器
 	_go_board = GoBoard.new()
 	_board_renderer = GoBoardSimpleRenderer.new(_go_board)
+	
+	# 初始化GTP命令管理
+	_gtp_cmd = GTPCmd.new() 
+	_gtp_cmd.set_connection_manager(_connection_manager)
 	
 	# 连接信号
 	_connect_button.pressed.connect(_on_connect_button_pressed)
@@ -98,12 +105,12 @@ func _on_connection_error(error_message: String):
 # 私有函数
 func _on_refresh_button_pressed():
 	print("Refresh button pressed, sending showboard command")
-	if _connection_manager:
-		var response = await _connection_manager.send_message_async("showboard\n")
+	if _gtp_cmd:
+		var response = await _gtp_cmd.send("showboard")
 		if response is String:
 			_go_board.parse_showboard_response(response)
 			# 触发重绘
 			queue_redraw()
 
 	else:
-		print("Cannot send message: connection_manager is null")
+		print("Cannot send message: gtp_cmd is null")
