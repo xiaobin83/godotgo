@@ -1,37 +1,96 @@
-[gd_scene load_steps=3 format=3 uid="uid://d3t62ljuybvo4"]
+[gd_scene load_steps=4 format=3 uid="uid://d3t62ljuybvo4"]
 
 [ext_resource type="Script" uid="uid://cysbi2u08jyp6" path="res://main_ui.gd" id="1_7clx1"]
 [ext_resource type="Script" uid="uid://brp8k0dvjia72" path="res://connection_manager.gd" id="2_0wfyh"]
+[ext_resource type="Script" uid="uid://c11psnmjcqkkr" path="res://go_board_simple_renderer.gd" id="3_sugp2"]
 
-[node name="MainUI" type="Node2D"]
-script = ExtResource("1_7clx1")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MainUI" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 78.0
-offset_top = 48.0
-offset_right = 163.0
-offset_bottom = 141.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Label" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-text = "Hostname:"
-
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer"]
-layout_mode = 2
-placeholder_text = "host:port"
-
-[node name="BtnConnect" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Connect"
-
-[node name="BtnShowboard" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Showboard"
+script = ExtResource("1_7clx1")
 
 [node name="ConnectionManager" type="Node" parent="."]
 script = ExtResource("2_0wfyh")
+
+[node name="Container" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Space" type="Control" parent="Container"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+
+[node name="Left" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="Space 1" type="Control" parent="Container/Left"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Container/Left"]
+layout_mode = 2
+text = "Hostname:"
+
+[node name="LineEdit" type="LineEdit" parent="Container/Left"]
+layout_mode = 2
+placeholder_text = "host:port"
+
+[node name="BtnConnect" type="Button" parent="Container/Left"]
+layout_mode = 2
+text = "Connect"
+
+[node name="Space 3" type="Control" parent="Container/Left"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="BtnShowboard" type="Button" parent="Container/Left"]
+layout_mode = 2
+text = "Showboard"
+
+[node name="Space 2" type="Control" parent="Container/Left"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Board" type="Control" parent="Container"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_sugp2")
+
+[node name="Right" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="Space" type="Control" parent="Container/Right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BlackCaptured" type="Label" parent="Container/Right"]
+layout_mode = 2
+text = "Black Captured: 0"
+
+[node name="Space 4" type="Control" parent="Container/Right"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="WhiteCaptured" type="Label" parent="Container/Right"]
+layout_mode = 2
+text = "White Captured: 0"
+
+[node name="Space2" type="Control" parent="Container/Right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Space2" type="Control" parent="Container"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2

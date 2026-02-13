@@ -1,9 +1,16 @@
-extends Node2D
+extends Control 
 
 # UI元素
-@onready var _hostname_input = $VBoxContainer/LineEdit
-@onready var _connect_button = $VBoxContainer/BtnConnect
-@onready var _refresh_button = $VBoxContainer/BtnShowboard
+@onready var _hostname_input = $Container/Left/LineEdit
+@onready var _connect_button = $Container/Left/BtnConnect
+@onready var _refresh_button = $Container/Left/BtnShowboard
+
+# center
+@onready var _board = $Container/Board
+
+#right
+@onready var _black_captured = $Container/Right/BlackCaptured
+@onready var _white_captured = $Container/Right/WhiteCaptured
 
 # 连接管理器
 @onready var _connection_manager = $ConnectionManager
@@ -13,7 +20,6 @@ var _gtp_cmd
 
 # 棋盘相关
 var _go_board
-var _board_renderer
 
 # 构造函数
 func _ready():
@@ -21,12 +27,12 @@ func _ready():
 	
 	# 初始化棋盘和渲染器
 	_go_board = GoBoard.new()
-	_board_renderer = GoBoardSimpleRenderer.new(_go_board)
+	_board.set_board(_go_board)
 	
 	# 初始化GTP命令管理
 	_gtp_cmd = GTPCmd.new() 
 	_gtp_cmd.set_connection_manager(_connection_manager)
-	
+
 	# 连接信号
 	_connect_button.pressed.connect(_on_connect_button_pressed)
 	_refresh_button.pressed.connect(_on_refresh_button_pressed)
@@ -65,12 +71,6 @@ func _ready():
 		print("Auto connect not enabled")
 
 # 私有函数
-func _draw():
-	# 绘制棋盘
-	if _board_renderer:
-		_board_renderer.draw_board(self)
-
-# 私有函数
 func _on_connect_button_pressed():
 	var hostname = _hostname_input.text
 	print("Connect button pressed, hostname: ", hostname)
@@ -86,6 +86,18 @@ func _on_connected():
 	_connect_button.text = "Disconnect"
 	_connect_button.pressed.disconnect(_on_connect_button_pressed)
 	_connect_button.pressed.connect(_on_disconnect_button_pressed)
+	var resp = await _gtp_cmd.query_boardsize_async()
+	if resp.result != OK:
+		return
+	_go_board.set_board_size(resp.response)
+
+	resp = await _gtp_cmd.showboard_async()
+	if resp.result != OK:
+		return
+	_go_board.parse_showboard_response(resp.response)
+	_black_captured.text = "Black Captured: " + resp.black_captured
+	_white_captured.text = "White Captured: " + resp.white_captured
+	queue_redraw()
 
 # 私有函数
 func _on_disconnect_button_pressed():

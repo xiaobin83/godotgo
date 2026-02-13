@@ -50,18 +50,13 @@ func parse_showboard_response(response: String):
 	# 解析 showboard 命令的响应
 	var lines = response.split("\n")
 	
-	# 检查返回成功标志
-	if lines.size() < 1 or not lines[0].begins_with("="):
-		print("Error: Invalid showboard response")
-		return
-
 	# 解析横坐标
 	var column_labels = []
-	if lines.size() >= 2:
+	if lines.size() >= 1:
 		column_labels = lines[1].strip_edges().split(" ")
 	
 	# 解析棋盘数据
-	var row_data_start = 2
+	var row_data_start = 1
 	var row_data_end = lines.size() - 1
 	
 	# 找到棋盘数据的结束位置（最后一行横坐标之前）

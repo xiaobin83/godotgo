@@ -16,7 +16,7 @@ class Request:
 	signal response_received(response)
 
 	func _init(request: String):
-		_request = request
+		_request = request + '\n'
 		_status = RequestStatus.STATUS_PENDING
 
 	func _put_data(tcp: StreamPeerTCP) -> int:
@@ -91,8 +91,6 @@ func disconnect_from_server():
 	_requests.clear()
 
 func send_message_async(message: String):
-	if _tcp.get_status() != StreamPeerTCP.STATUS_CONNECTED:
-		return null
 	var r = Request.new(message) 
 	_requests.push_back(r)
 	return await r.response_received
@@ -101,9 +99,10 @@ func _process(_delta):
 	# 处理网络事件
 	_tcp.poll()
 
-	while _requests.size() > 0:
-		var request = _requests.front()
-		var status = request.process(_tcp)
-		if status == RequestStatus.STATUS_RECEIVED or status == RequestStatus.STATUS_ERROR:
-			_requests.pop_front()
+	if _tcp.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+		while _requests.size() > 0:
+			var request = _requests.front()
+			var status = request.process(_tcp)
+			if status == RequestStatus.STATUS_RECEIVED or status == RequestStatus.STATUS_ERROR:
+				_requests.pop_front()
 
