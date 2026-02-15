@@ -4,6 +4,8 @@ extends Control
 @onready var _hostname_input = $Container/Left/LineEdit
 @onready var _connect_button = $Container/Left/BtnConnect
 @onready var _refresh_button = $Container/Left/BtnShowboard
+@onready var _board_size_option = $Container/Left/VBoxContainer/OptionBoardSize
+@onready var _set_board_size_button = $Container/Left/VBoxContainer/BtnSetBoardSize
 
 # center
 @onready var _board = $Container/Board

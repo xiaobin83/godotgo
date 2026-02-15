@@ -32,6 +32,8 @@ layout_mode = 2
 
 [node name="Left" type="VBoxContainer" parent="Container"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
 
 [node name="Space 1" type="Control" parent="Container/Left"]
 layout_mode = 2
@@ -57,6 +59,33 @@ layout_mode = 2
 layout_mode = 2
 text = "Showboard"
 
+[node name="Space 4" type="Control" parent="Container/Left"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Container/Left"]
+layout_mode = 2
+text = "Board Size"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="Container/Left"]
+layout_mode = 2
+
+[node name="OptionBoardSize" type="OptionButton" parent="Container/Left/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "19"
+popup/item_0/id = 0
+popup/item_1/text = "13"
+popup/item_1/id = 1
+popup/item_2/text = "9"
+popup/item_2/id = 2
+
+[node name="BtnSetBoardSize" type="Button" parent="Container/Left/VBoxContainer"]
+layout_mode = 2
+text = "Set"
+
 [node name="Space 2" type="Control" parent="Container/Left"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -68,7 +97,6 @@ script = ExtResource("3_sugp2")
 
 [node name="Right" type="VBoxContainer" parent="Container"]
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.25
 
 [node name="Space" type="Control" parent="Container/Right"]
